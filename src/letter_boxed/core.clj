@@ -5,14 +5,6 @@
    [clojure.set]
    [clojure.math.combinatorics :as combo]))
 
-(defn puzzle-slns
-  "Return a seq of all the two words solutions to the puzzle"
-  [valid-words sides]
-  (let [required-letters (apply clojure.set/union (vals sides))]
-    (->> (combo/permuted-combinations valid-words 2)
-         (filter #(apply words-can-join? %) ,,,)
-         (filter (partial all-letters-used? required-letters) ,,,))))
-
 (defn valid-word?
   "Is the word valid for the sides passed in"
   ([word sides]
@@ -46,17 +38,26 @@
   "Read lines from file and strip each"
   [file]
   (->> file
-       (slurp)
-       (s/lower-case)
-       (s/split-lines)
-       (map s/trim)))
+       (slurp ,,,)
+       (s/lower-case ,,,)
+       (s/split-lines ,,,)
+       (map s/trim ,,,)
+       (filter #(not (s/ends-with? % "'s")) ,,,)))
 
 (defn create-sides
   "Create a map of the sides of the board"
   [letters]
   (zipmap
    (range)
-   (map #(into #{} %) (partition 3 letters))))
+   (map set (partition 3 letters))))
+
+(defn puzzle-slns
+  "Return a seq of all the two words solutions to the puzzle"
+  [valid-words sides]
+  (let [required-letters (apply clojure.set/union (vals sides))]
+    (->> (combo/permuted-combinations valid-words 2)
+         (filter #(apply words-can-join? %))
+         (filter (partial all-letters-used? required-letters)))))
 
 (defn -main
 
@@ -65,7 +66,10 @@
   (println "the letters of the board are" letters)
   (def sides (create-sides letters))
   (println "The sides of the board are " sides)
-  (def f "/Users/natemcintosh/Documents/datasets/scrabble_words.txt")
+  (def f "/Users/mcintna1/datasets/american_english_dictionary.txt")
   (def words (strip-read-lines f))
   (def valid-words (into [] (filter #(valid-word? % sides) words)))
-  (println "Found " (count valid-words) " valid words"))
+  (println "Found " (count valid-words) " valid words")
+  (def slns (puzzle-slns valid-words sides))
+  (println slns))
+
