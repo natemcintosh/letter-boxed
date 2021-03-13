@@ -66,7 +66,7 @@
   (println "the letters of the board are" letters)
   (def sides (create-sides letters))
   (println "The sides of the board are " sides)
-  (def f "/Users/mcintna1/datasets/american_english_dictionary.txt")
+  (def f "american_english_dictionary.txt")
   (def words (strip-read-lines f))
   (def valid-words (into [] (filter #(valid-word? % sides) words)))
   (println "Found " (count valid-words) " valid words")
